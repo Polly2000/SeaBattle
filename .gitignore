@@ -116,3 +116,8 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/windows,intellij
+.idea/misc.xml
+.idea/modules.xml
+.idea/SeaBattle.iml
+.idea/vcs.xml
+.idea/vcs.xml
