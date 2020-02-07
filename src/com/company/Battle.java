@@ -1,48 +1,44 @@
 package com.company;
 
+import java.util.ArrayList;
 public class Battle {
 
-    //Переменная подсчета количества попаданий
-    int numOfHits = 0;
+    //ArrayList вместо массива: для хранения ячеек корабля
+    private ArrayList<String> locationCells;
 
-    //Массив для хранения адреса ячеек
-    int[] locationCells;
+    //Имя корабля
+    private String name;
 
     //Сеттер, принимающий целочисленный массив
-    public void setLocationCells(int[] locs) {
-        locationCells = locs;
+    public void setLocationCells(ArrayList<String> loc) {
+        locationCells = loc;
+    }
+
+    //Сеттер для имени корабля
+    public void setName(String string) {
+        name = string;
     }
 
     //Метод, принимающий ход пользователя в качестве параметра String, проверяет, возвращает итог (мимо,попал)
-    public String checkYourself(String stringGuess) {
-
-        //Переменная для хранения значения, введенного пользователем, преобразование полученного в тип int
-        int guess = Integer.parseInt(stringGuess);
+    public String checkYourself(String userInput) {
 
         //Переменная результата
         String result = "Мимо";
 
-        //Цикл, повторяющий для каждого элемента массива locationCells
-        for (int cell : locationCells) {
+        //Если ход игрока совпал с одной из ячеек корабля, то метод indexOf() вернет местоположение. Если нет, вернет "-1"
+        int index = locationCells.indexOf(userInput);
 
-            //Условие на попадание в корабль
-            if (guess == cell) {
+        if (index >= 0) {
+            locationCells.remove(index);
+            if (locationCells.isEmpty()) {
+                result = "Потопил";
+                System.out.println("Вы потопили: " + name);
+            }
+            else {
                 result = "Попал";
-                numOfHits++;
-                break;
             }
         }
-
-        //Условие на уничтожение целого корабля
-        if (numOfHits == locationCells.length) {
-            result = "Потопил";
-        }
-
-        //Вернуть результат
-        System.out.println(result);
+        //Возврат "мимо", "попал" или "потопил"
         return result;
-
     }
-
-
 }
