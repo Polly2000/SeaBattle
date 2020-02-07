@@ -1,47 +1,85 @@
 package com.company;
 
+//import helpers.GameHelper;
+import java.util.*;
+
 public class BattleGame {
+    private GameHelper helper = new GameHelper();
+    private ArrayList<Battle> shipObjectList = new ArrayList<Battle>();
+    private int numOfGuesses = 0;
 
-    public static void main(String[] args) {
+    //Создание кораблей по имени
+    private void setUpGame() {
+        Battle one = new Battle();
+        one.setName("Инопланетный корабль");
+        Battle two = new Battle();
+        two.setName("Плот робинзона");
+        Battle three = new Battle();
+        three.setName("Корабль твоего врага");
+        shipObjectList.add(one);
+        shipObjectList.add(two);
+        shipObjectList.add(three);
 
-        //Переменная для подсчета количества попыток игрока
-        int numOfGuess = 0;
+        System.out.println("Цель - потопить три корабля: ");
+        System.out.println("Кораблик1, Кораблик2, Кораблик3");
+        System.out.println("Внимание! Данные устарели. Мы не знаем, сколько на самом деле кораблей.");
+        System.out.println("Необходимо потопить их на минимальное количество ходов, удачи!");
 
-        //Создание объекта GameHelper, необходимого для пользовательского ввода
-        GameHelper helper = new GameHelper();
+        for (Battle battleToSet : shipObjectList) {
 
-        //Создание объекта потопляемого в будущем корабля :)
-        Battle shipObject = new Battle();
+            //Запрос на место корабля
+            ArrayList<String> newLocation = helper.placeBattleGame(3);
 
-        //Генерация случайного числа, с которого будет начинаться массив нашего корабля(массив для хранения адреса ячеек)
-        int random = (int) (Math.random() * 5);
+            //Вызов сеттера, чтобы передать ему местоположение корабля, какое только что получили
+            battleToSet.setLocationCells(newLocation);
+        }
+    }
 
-        //Массив для хранения рандомных чисел
-        int[] locations = {random, random + 1, random + 2};
+    private void startPlaying() {
+        while (!shipObjectList.isEmpty()) {
+            String userGuess = helper.getUserInput("Сделай ход: ");
+            checkUserGuess(userGuess);
+        }
+        finishGame();
+    }
 
-        //Передает кораблю местоположение массива/ячеек
-        shipObject.setLocationCells(locations);
+    private void checkUserGuess(String userGuess) {
+        numOfGuesses++;
+        String result = "Мимо";
 
-        //Переменная для проверки, не закончилась ли игра
-        boolean isAlive = true;
+        //Повторяем для всех объектов shipObjectList
+        for (Battle shipObjectListTest : shipObjectList) {
 
-        while (isAlive == true) {
+            //Ищем попадание или потопление
+            result = shipObjectListTest.checkYourself(userGuess);
 
-            //Пока идет игра, программа просит ввести число
-            String guess = helper.getUserInput("Введите число");
-
-            //Сохранение полученного результата
-            String result = shipObject.checkYourself(guess);
-
-            //Увеличивается значение переменной для хранения количество попыток игрока
-            numOfGuess++;
-
-            //Когда корабль потоплен, игра заканчивается, и выводится итог
+            if (result.equals("Попал")) {
+                break;
+            }
             if (result.equals("Потопил")) {
-                isAlive = false;
-                System.out.println("Вам потребовалось " + numOfGuess + " попыток(и)");
+                //Удаляем из списка корабль
+                shipObjectList.remove(shipObjectListTest);
+                break;
             }
         }
+        System.out.println(result);
+    }
+
+    private void finishGame() {
+        System.out.println("Корабли уничтожены! Браво, Адмирал!");
+        if (numOfGuesses <= 18) {
+            System.out.println("Капитан, это заняло у вас всего " + numOfGuesses + "попыток");
+        } else {
+            System.out.println("Вы теперь матрос... " + numOfGuesses + " попыток.");
+            System.out.println("Идем ко дну целым составом...");
+            System.out.println("..Прощайте..");
+        }
+    }
+
+    public static void main(String[] args) {
+        BattleGame game = new BattleGame();
+        game.setUpGame();
+        game.startPlaying();
     }
 }
 
